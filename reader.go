@@ -31,35 +31,98 @@ func (b *BitReader) Read_bool() (bool, error) {
 }
 
 func (b *BitReader) Read_byte() (byte, error) {
-	value := b.Buff[b.Offset]
+	if b.Offset >= len(b.Buff) {
+		return 0, errors.New("EOF")
+	}
+
+	if 0 == b.bi {
+		value := b.Buff[b.Offset]
+		b.Offset++
+
+		return value, nil
+	}
+	b0 := b.b >> b.bi
+	b.b = b.Buff[b.Offset]
+	b1 := b.b << (8 - b.bi)
 	b.Offset++
+
+	value := b0 | b1
 
 	return value, nil
 }
 
 func (b *BitReader) Read_int8() (int8, error) {
-	value := int8(b.Buff[b.Offset])
-	b.Offset += 1
+	v, err := b.Read_byte()
+	return int8(v), err
+}
 
-	return value, nil
+func (b *BitReader) Read_unt8() (uint8, error) {
+	v, err := b.Read_byte()
+	return uint8(v), err
 }
 
 func (b *BitReader) Read_int16() (int16, error) {
-	value := int16(b.Buff[b.Offset])
-	value = (value) | int16(b.Buff[b.Offset+1])<<8
-	b.Offset += 2
+	b0, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	b1, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	return int16(b0) | int16(b1)<<8, nil
+}
 
-	return value, nil
+func (b *BitReader) Read_uint16() (uint16, error) {
+	b0, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	b1, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	return uint16(b0) | uint16(b1)<<8, nil
+}
+
+func (b *BitReader) Read_int32() (int32, error) {
+	b0, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	b1, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	b2, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	b3, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	return int32(b0) | int32(b1)<<8 | int32(b2)<<16 | int32(b3)<<24, nil
 }
 
 func (b *BitReader) Read_uint32() (uint32, error) {
-	value := uint32(b.Buff[b.Offset])
-	value = (value) | uint32(b.Buff[b.Offset+1])<<8
-	value = (value) | uint32(b.Buff[b.Offset+2])<<16
-	value = (value) | uint32(b.Buff[b.Offset+3])<<24
-	b.Offset += 4
-
-	return value, nil
+	b0, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	b1, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	b2, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	b3, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	return uint32(b0) | uint32(b1)<<8 | uint32(b2)<<16 | uint32(b3)<<24, nil
 }
 
 func (b *BitReader) Skip(numBytes int) {

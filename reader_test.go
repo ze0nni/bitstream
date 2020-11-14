@@ -97,3 +97,32 @@ func Test_read8One8ZeroBits(t *testing.T) {
 		assert.Equal(t, false, b, "0 "+strconv.Itoa(i))
 	}
 }
+
+func Test_ReadMixedBites(t *testing.T) {
+	w := &bitstream.BitWriter{}
+
+	w.Write_bool(true)
+	w.Write_byte(13)
+	w.Write_bool(false)
+	w.Write_byte(42)
+	w.Flush()
+
+	r := &bitstream.BitReader{}
+	r.Reset(w.Buff)
+
+	vt, err := r.Read_bool()
+	assert.NoError(t, err, "1")
+	assert.Equal(t, true, vt)
+
+	v13, err := r.Read_byte()
+	assert.NoError(t, err, "4")
+	assert.Equal(t, byte(13), v13)
+
+	vf, err := r.Read_bool()
+	assert.NoError(t, err, "3")
+	assert.Equal(t, false, vf)
+
+	v42, err := r.Read_byte()
+	assert.NoError(t, err, "2")
+	assert.Equal(t, byte(42), v42)
+}
