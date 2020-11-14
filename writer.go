@@ -77,13 +77,19 @@ func (b *BitWriter) Reset() {
 }
 
 func (b *BitWriter) ResetTo(buff []byte) {
+	b.b = 0
+	b.bi = 0
 	b.Buff = buff
 }
 
 func (b *BitWriter) ResetToSize(size int) {
 	if len(b.Buff) < size {
+		b.b = 0
+		b.bi = 0
 		b.Buff = append(b.Buff, make([]byte, size-len(b.Buff))...)
 	} else {
+		b.b = 0
+		b.bi = 0
 		b.Buff = b.Buff[:size]
 	}
 }
