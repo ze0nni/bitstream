@@ -1,22 +1,34 @@
 package bitstream
 
+import "errors"
 
 type BitReader struct {
-	Offset     int
-	Buff       []byte
-	data       byte
-	dataOffset uint8
+	Offset int
+	Buff   []byte
+
+	b  byte
+	bi int
 }
 
-
-
 func (b *BitReader) Read_bool() (bool, error) {
-	value := b.Buff[b.Offset] > 0
-	b.Offset++
+	if 0 == b.bi {
+		if b.Offset >= len(b.Buff) {
+			return false, errors.New("EOF")
+		}
+
+		b.b = b.Buff[b.Offset]
+		b.Offset++
+	}
+
+	value := 1 == ((b.b >> b.bi) & 1)
+	if b.bi == 7 {
+		b.bi = 0
+	} else {
+		b.bi++
+	}
 
 	return value, nil
 }
-
 
 func (b *BitReader) Read_byte() (byte, error) {
 	value := b.Buff[b.Offset]
@@ -40,7 +52,6 @@ func (b *BitReader) Read_int16() (int16, error) {
 	return value, nil
 }
 
-
 func (b *BitReader) Read_uint32() (uint32, error) {
 	value := uint32(b.Buff[b.Offset])
 	value = (value) | uint32(b.Buff[b.Offset+1])<<8
@@ -58,8 +69,9 @@ func (b *BitReader) Skip(numBytes int) {
 func (b *BitReader) Reset(buff []byte) {
 	b.Offset = 0
 	b.Buff = buff
-	b.data = 0
-	b.dataOffset = 0
+
+	b.b = 0
+	b.bi = 0
 }
 
 func (b *BitReader) EOF() bool {
