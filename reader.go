@@ -1,6 +1,8 @@
 package bitstream
 
-import "errors"
+import (
+	"errors"
+)
 
 type BitReader struct {
 	Offset int
@@ -56,7 +58,7 @@ func (b *BitReader) Read_int8() (int8, error) {
 	return int8(v), err
 }
 
-func (b *BitReader) Read_unt8() (uint8, error) {
+func (b *BitReader) Read_uint8() (uint8, error) {
 	v, err := b.Read_byte()
 	return uint8(v), err
 }
@@ -126,6 +128,7 @@ func (b *BitReader) Read_uint32() (uint32, error) {
 }
 
 func (b *BitReader) Skip(numBytes int) {
+	b.bi = 0
 	b.Offset += numBytes
 }
 
