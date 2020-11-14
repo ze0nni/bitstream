@@ -23,26 +23,50 @@ func (b *BitWriter) Write_bool(value bool) error {
 }
 
 func (b *BitWriter) Write_byte(value byte) error {
-	b.Buff = append(b.Buff, value)
+	if 0 == b.bi {
+		b.Buff = append(b.Buff, value)
+	} else {
+		b.b = b.b | (value << b.bi)
+		b.Buff = append(b.Buff, b.b)
+		b.b = (value >> (8 - b.bi))
+	}
 	return nil
 }
 
 func (b *BitWriter) Write_int8(value int8) error {
-	b.Buff = append(b.Buff, byte(value))
-	return nil
+	return b.Write_byte(byte(value))
+}
+
+func (b *BitWriter) Write_uint8(value uint8) error {
+	return b.Write_byte(byte(value))
 }
 
 func (b *BitWriter) Write_int16(value int16) error {
-	b.Buff = append(b.Buff, byte(value>>0))
-	b.Buff = append(b.Buff, byte(value>>8))
+	return b.Write_byte(byte(value >> 0))
+	return b.Write_byte(byte(value >> 8))
+	return nil
+}
+
+func (b *BitWriter) Write_uint16(value uint16) error {
+	return b.Write_byte(byte(value >> 0))
+	return b.Write_byte(byte(value >> 8))
+	return nil
+}
+
+func (b *BitWriter) Write_int32(value int32) error {
+	return b.Write_byte(byte(value >> 0))
+	return b.Write_byte(byte(value >> 8))
+	return b.Write_byte(byte(value >> 16))
+	return b.Write_byte(byte(value >> 24))
+
 	return nil
 }
 
 func (b *BitWriter) Write_uint32(value uint32) error {
-	b.Buff = append(b.Buff, byte(value>>0))
-	b.Buff = append(b.Buff, byte(value>>8))
-	b.Buff = append(b.Buff, byte(value>>16))
-	b.Buff = append(b.Buff, byte(value>>24))
+	return b.Write_byte(byte(value >> 0))
+	return b.Write_byte(byte(value >> 8))
+	return b.Write_byte(byte(value >> 16))
+	return b.Write_byte(byte(value >> 24))
 
 	return nil
 }

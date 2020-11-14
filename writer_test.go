@@ -94,3 +94,32 @@ func Test_write8One8ZerBit(t *testing.T) {
 		w.Buff,
 	)
 }
+
+func Test_WriteBytes(t *testing.T) {
+	w := &bitstream.BitWriter{}
+
+	w.Write_byte(1)
+	w.Write_byte(2)
+	w.Write_byte(34)
+	w.Flush()
+
+	assert.Equal(
+		t,
+		[]byte{1, 2, 34},
+		w.Buff,
+	)
+}
+
+func Test_MixOneOneAnd255(t *testing.T) {
+	w := &bitstream.BitWriter{}
+	w.Write_bool(true)
+	w.Write_bool(true)
+	w.Write_byte(255)
+	w.Flush()
+
+	assert.Equal(
+		t,
+		[]byte{255, 3},
+		w.Buff,
+	)
+}
