@@ -127,6 +127,42 @@ func (b *BitReader) Read_uint32() (uint32, error) {
 	return uint32(b0) | uint32(b1)<<8 | uint32(b2)<<16 | uint32(b3)<<24, nil
 }
 
+func (b *BitReader) Read_int64() (int64, error) {
+	b0, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	b1, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	b2, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	b3, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	b4, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	b5, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	b6, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	b7, err := b.Read_byte()
+	if nil != err {
+		return 0, err
+	}
+	return int64(b0) | int64(b1)<<8 | int64(b2)<<16 | int64(b3)<<24 | int64(b4)<<32 | int64(b5)<<40 | int64(b6)<<48 | int64(b7)<<56, nil
+}
+
 func (b *BitReader) Skip(numBytes int) {
 	b.bi = 0
 	b.Offset += numBytes

@@ -65,6 +65,17 @@ func (b *BitWriter) Write_uint32(value uint32) {
 	b.Write_byte(byte(value >> 24))
 }
 
+func (b *BitWriter) Write_int64(value int64) {
+	b.Write_byte(byte(value >> 0))
+	b.Write_byte(byte(value >> 8))
+	b.Write_byte(byte(value >> 16))
+	b.Write_byte(byte(value >> 24))
+	b.Write_byte(byte(value >> 32))
+	b.Write_byte(byte(value >> 40))
+	b.Write_byte(byte(value >> 48))
+	b.Write_byte(byte(value >> 56))
+}
+
 func (b *BitWriter) Flush() error {
 	if 0 != b.bi {
 		b.Buff = append(b.Buff, b.b)
